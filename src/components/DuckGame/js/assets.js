@@ -1,14 +1,17 @@
-import stage from "../../../assets/stage.png"
-export const assets = {
-    stage
-}
+import { getImageUrl } from "./tools"
+import stage from "@/assets/stage.png"
+import aim from "@/assets/aim.png"
+import fire from "@/assets/fire.mp3"
+import press from "@/assets/Press Start 2P.woff2"
 
-let textures = {}
+// const stage = getImageUrl("../../../assets/stage.png")
+// const aim = getImageUrl("../../../assets/aim.png")
+// const press = "https://fonts.googleapis.com/css?family=Press+Start+2P"
+// const fire = getImageUrl("../../../assets/fire.mp3")
 
-export function setTextures(key, value) {
-    textures[key] = value;
-}
-
-export function getTextures(key) {
-    return textures[key]
+export default {
+    stage,
+    aim,
+    press,
+    fire
 }

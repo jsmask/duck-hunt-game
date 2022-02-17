@@ -1,24 +1,33 @@
 <script setup>
 import { ref, nextTick } from "vue";
 import Game from "./js";
+import Bus from "../../utils/bus";
 
 const canvas = ref(null);
-const count = ref(0);
-const bgm = ref(null);
+const scale = `scale(${window.innerHeight / 769})`;
 
 nextTick(() => {
-  let game = new Game({
-    width: 1200,
-    height: 769,
+  const height = 769;
+  const width = 1200;
+  new Game({
+    width,
+    height,
     el: canvas.value,
-    resolution: 0.8
+    resolution: 1,
+    onProgress: n => {
+      Bus.$emit("changeProgress", n);
+    }
   }).init();
 });
 </script>
 
 <template>
-  <div ref="canvas"></div>
+  <div class="game" ref="canvas"></div>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
+.game {
+  transform: v-bind(scale);
+  cursor: none !important;
+}
 </style>

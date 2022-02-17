@@ -1,20 +1,34 @@
 <script setup>
-import DuckGame from "./components/DuckGame/index.vue"
+import Loading from "./components/Loading/index.vue";
+import DuckGame from "./components/DuckGame/index.vue";
+import { ref } from "vue";
+import Bus from "./utils/bus"
+
+const progress = ref(0);
+
+Bus.$on("changeProgress",n=>{
+  progress.value = n;
+})
+
 </script>
 
 <template>
-  <DuckGame />
+  <div>
+    <Loading v-if="progress<100" />
+    <DuckGame />
+  </div>
 </template>
 
 <style>
-*{
+* {
   padding: 0;
   margin: 0;
 }
-body,html{
+body,
+html {
   width: 100%;
   height: 100vh;
-  background-color: #333;
+  background-color: #000;
 }
 #app {
   width: 100%;
@@ -23,5 +37,6 @@ body,html{
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
 }
 </style>
