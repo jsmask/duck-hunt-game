@@ -9,10 +9,15 @@
       <span>n</span>
       <span>g</span>
     </p>
+    <div class="progress">{{Math.floor(progress)}}%</div>
   </div>
 </template>
 
 <script setup>
+import { ref,defineProps } from "vue"
+const props = defineProps({
+  progress:0
+})
 </script>
 
 <style lang="scss" scoped>
@@ -20,6 +25,17 @@
 @import url("https://fonts.googleapis.com/css?family=Press+Start+2P");
 $t: 3s;
 $n: 7;
+
+.progress{
+    display: block;
+    position: absolute;
+    right: 2%;
+    bottom: 2%;
+    font-size: 1em;
+    color: white;
+    text-transform: uppercase;
+    font-family: "Press Start 2P", sans-serif;
+}
 
 .loading-page {
   width: 100%;
@@ -32,7 +48,7 @@ $n: 7;
   position: absolute;
   top: 0;
   left: 0;
-  z-index: 99;
+  z-index: 99; 
 }
 
 .loading {

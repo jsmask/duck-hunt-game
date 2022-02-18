@@ -14,7 +14,7 @@ Bus.$on("changeProgress",n=>{
 
 <template>
   <div>
-    <Loading v-if="progress<100" />
+    <Loading v-if="progress<100" :progress="progress" />
     <DuckGame />
   </div>
 </template>
@@ -28,7 +28,7 @@ body,
 html {
   width: 100%;
   height: 100vh;
-  background-color: #000;
+  background-color: #333;
 }
 #app {
   width: 100%;
