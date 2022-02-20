@@ -2,46 +2,49 @@ import { createSprite } from "./tools"
 import { Text, Graphics, Container } from "pixi.js";
 import assets from "./assets"
 import Bus from "@/utils/bus"
-import { addAim } from "./tools"
-import { playFire } from "./audio"
+import { showToast } from "./tools"
+import { playFire,playBgm  } from "./audio"
+import Scene from "./scene"
+import Dog from "./dog"
+
 
 function checkScore(score) {
     return (Math.min(999999, score) + "").padStart(6, "0")
 }
 
-export default class MainScene {
+export default class MainScene extends Scene {
     constructor(game) {
-        this.game = game;
-        this.stage = new Container();
+        super(game)
         this.stageContainer = new Container();
         this.uiContainer = new Container();
         this.stage.addChild(this.stageContainer);
         this.stage.addChild(this.uiContainer);
         this.stageContainer.sortableChildren = true
-        this.stage.interactive = true;
-        this.stage.buttonMode = true;
+        this.stageContainer.interactive = true;
+        this.dog = new Dog(this.stageContainer)
+        this.round = 1;
         this.hitList = [];
         this.timeCount = 30;
         this.bulletNum = 3;
         this.score = 0;
+        this.isStart = false
+        this.stageContainer.on("pointerdown", this.handleClick.bind(this))
         return this;
     }
     init() {
-        const { game,stage, handleClick } = this;
+        const { game, stage, handleClick } = this;
         this.hitList = [...Array(10).keys()].map(() => false)
         this.timeCount = 30;
         this.bulletNum = 3;
+        this.round = 1;
+        this.stageContainer.removeChildren(0, this.stageContainer.children.length)
+        this.uiContainer.removeChildren(0, this.uiContainer.children.length)
         this.drawBackground()
         this.drawFireBox()
         this.drawDuckBox()
         this.drawScoreBox()
-        addAim({
-            x: game.width,
-            y: game.height,
-            stage,
-            handleClick: handleClick.bind(this)
-        });
         this.onStart();
+        return this
     }
     update(delta) {
         if (!this.stage.visible) return;
@@ -51,21 +54,93 @@ export default class MainScene {
         this.drawTimeCount();
         this.drawBulletNum()
     }
-    handleClick() {
+    async handleClick(e) {
+        if (!this.isStart) return;
+        console.log(e.data.global)
         this.bulletNum -= 1;
-        if (this.bulletNum < 0) return this.bulletNum = 3;
         this.score += 500;
         this.hitList[0] = true;
         playFire()
+
+        if (this.bulletNum <= 0) {
+            this.isStart = false;
+            await this.wait(.5)
+            await this.endRound()
+            return
+        };
     }
-    onStart() {
+    async onStart() {
+        await this.beginGame()
+
+        await this.createDuck()
+
+        // await this.endRound();
+
+        // await this.nextRound();
 
     }
-    show() {
-        this.stage.visible = true
+    async createDuck() {
+
     }
-    hide() {
-        this.stage.visible = false
+    async beginGame() {
+        playBgm()
+        await this.dog.start();
+        await this.nextRound();
+        console.log('onStart')
+    }
+    async endRound() {
+        const { game, stage, round } = this;
+        this.isStart = false;
+        if (round > 5) {
+            await this.gameOver()
+            return
+        }
+        showToast({
+            game, msg: "fly away",
+            parent: stage,
+            x: game.width / 2,
+            y: game.height / 2,
+            duration: 3,
+            width: 240,
+            height: 40,
+        })
+        await this.dog.laugh();
+        if (this.round <= 5) {
+            this.bulletNum = 3;
+            await this.nextRound()
+        }
+    }
+    async gameOver() {
+        const { game, stage } = this;
+        showToast({
+            game,
+            msg: "game over",
+            parent: stage,
+            duration: 3,
+            x: game.width / 2,
+            y: game.height / 2,
+            duration: 3,
+            width: 270,
+            height: 40,
+        })
+        await this.dog.laugh();
+
+        this.hide();
+        game.startScene.show();
+    }
+    async nextRound() {
+        const { game, stage } = this
+        await showToast({
+            game,
+            msg: "round\n" + this.round++,
+            parent: stage,
+            duration: 3,
+            x: game.width / 2,
+            y: game.height / 2,
+            width: 152,
+            height: 70,
+        })
+        this.isStart = true
     }
     drawBackground() {
         const { width, height } = this.game;
@@ -170,7 +245,6 @@ export default class MainScene {
         }
     }
     drawTimeCount() {
-        const { timeCount } = this;
         if (!this.timeCountBox) return
         this.timeCountBox.removeChildren(0, this.timeCountBox.children.length)
 

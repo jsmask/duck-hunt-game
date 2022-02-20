@@ -4,7 +4,8 @@ import Game from "./js";
 import Bus from "../../utils/bus";
 
 const canvas = ref(null);
-const scale = `scale(${window.innerHeight / 769})`;
+
+const scale = `scale(${window.innerHeight<window.innerWidth? window.innerHeight/ 769:window.innerWidth /1200})`;
 
 nextTick(() => {
   const height = 769;

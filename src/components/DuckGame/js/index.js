@@ -1,9 +1,10 @@
-import { Application, Loader } from "pixi.js";
+import { Application, Loader, Container } from "pixi.js";
 import assets from "./assets"
-import { setTextures} from "./textures"
+import { setTextures } from "./textures"
 import MainScene from "./mainScene"
 import StartScene from "./startScene"
 import Bus from "@/utils/bus"
+import { createAim } from "./tools"
 
 export default class Game {
   constructor(options = {}) {
@@ -17,7 +18,6 @@ export default class Game {
   }
   init() {
     let { resolution, width, height, el } = this;
-
     this.app = new Application({
       width: width,
       height: height,
@@ -33,23 +33,24 @@ export default class Game {
     this.app.renderer.plugins.interaction.cursorStyles.pointer = `none`;
 
     el.appendChild(this.app.view);
+
     this.stage = this.app.stage;
     this.stage.sortableChildren = true;
     this.stage.interactive = true;
 
-    this.events = [];
     this.loader = new Loader();
 
     this.startScene = new StartScene(this);
     this.stage.addChild(this.startScene.stage)
-    
-    this.mainScene  = new MainScene(this)
+
+    this.mainScene = new MainScene(this)
     this.stage.addChild(this.mainScene.stage)
 
     this.loaderTextures().then(res => {
       Object.entries(res).forEach(([key, value]) => setTextures(key, value.texture))
       this.render()
     })
+
     return this;
   }
   destroy() {
@@ -68,16 +69,26 @@ export default class Game {
     })
   }
   render() {
-    this.draw(); 
+    this.draw();
     this.update();
   }
   draw() {
+    this.addAim();
     this.startScene.init()
-    
-    Bus.$on("startGame",()=>{
+    Bus.$on("startGame", () => {
       this.startScene.hide();
-      this.mainScene.init()
+      this.mainScene.init().show();
     })
+  }
+  addAim(){
+    let aim = createAim({
+      x: 0,
+      y: 0
+    })
+    this.stage.on("pointermove", e => {
+      aim.position.copyFrom(e.data.global)
+    })
+    this.stage.addChild(aim)
   }
   addTicker(event) {
     this.events.push(event)
@@ -86,7 +97,6 @@ export default class Game {
     this.app.ticker.add((delta) => {
       this.startScene && this.startScene.update(delta);
       this.mainScene && this.mainScene.update(delta);
-      this.events.forEach(event => event(delta));
     })
   }
 }

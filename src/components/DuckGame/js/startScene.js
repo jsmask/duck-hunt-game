@@ -1,45 +1,24 @@
-import { addAim } from "./tools"
 import { Text, Graphics, Container } from "pixi.js";
 import Bus from "@/utils/bus"
-import gsap from "gsap"
-import { playBgm,playFire } from './audio';
+import { TimelineMax } from "gsap"
+import Scene from "./scene"
 
-class StartScene {
+class StartScene extends Scene {
     constructor(game) {
-        this.game = game;
-        this.stage = new Container();
+        super(game)
         this.topScore = null;
-        this.stage.interactive = true;
-        this.stage.buttonMode = true;
         return this
     }
     init() {
-        const { game, stage } = this;
+        const { game } = this;
         this.drawBg()
         this.drawTitle()
         this.drawStartBtn()
         this.drawTopScore()
-        addAim({
-            x: game.width,
-            y: game.height,
-            stage
-        });
-        this.stage.on("pointerdown", e => {
-            playFire()
-            playBgm()
-            Bus.$emit("startGame")
-            
-        })
+        // this.stage.on("pointerdown", e => {
+        //     playFire()
+        // })
         return this
-    }
-    update(delta) {
-        if (!this.stage.visible) return;
-    }
-    show() {
-        this.stage.visible = true
-    }
-    hide() {
-        this.stage.visible = false
     }
     drawBg() {
         const { width, height } = this.game;
@@ -93,7 +72,16 @@ class StartScene {
         this.btn.anchor.set(0.5, 0.5);
         this.btn.position.set(width / 2, 560)
         this.stage.addChild(this.btn)
-        let btnAni = gsap.fromTo(this.btn, {alpha: 0}, {alpha: 1,duration:.45,immediateRender:true,ease:"SteppedEase(1)"});
+
+        this.btn.interactive = true;
+        this.btn.buttonMode = true;
+        this.btn.on("pointerdown", e => {
+            // playFire()
+            // playBgm()
+            Bus.$emit("startGame")
+        })
+
+        let btnAni = new TimelineMax().fromTo(this.btn, {alpha: 0}, {alpha: 1,duration:.45,immediateRender:true,ease:"SteppedEase(1)"});
         btnAni.repeat(-1)
         btnAni.yoyo(true);
     }

@@ -11,7 +11,18 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
+      '@p': path.resolve(__dirname, './public')
     },
   },
   plugins: [vue()],
+  build:{
+    rollupOptions:{
+      output:{
+        manualChunks:{
+          "pixi": ['pixi.js'],
+          "gsap":["gsap"]
+        }
+      }
+    }
+  }
 })

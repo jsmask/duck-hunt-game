@@ -1,29 +1,33 @@
 import { getImageUrl } from "./tools"
-import stage from "@/assets/stage.png"
-import aim from "@/assets/aim.png"
-import fire from "@/assets/fire.mp3"
-import bgm from "@/assets/bgm.mp3"
-import win from "@/assets/win.mp3"
-import press from "@/assets/Press Start 2P.woff2"
-import bird0 from "@/assets/bird0.png"
-import bird1 from "@/assets/bird1.png"
-import bullet from "@/assets/bullet.png"
 
+const audioList = {
+    fire:getImageUrl("fire","mp3"),
+    bgm:getImageUrl("bgm","mp3"),
+    dog_start:getImageUrl("dog_start","mp3"),
+    dog_laugh:getImageUrl("dog_laugh","mp3"),
+    win:getImageUrl("win","mp3"),
+}
 
+const bird0 = getImageUrl("bird0");
+const bird1 = getImageUrl("bird1");
+const bullet = getImageUrl("bullet");
+const press = getImageUrl("Press Start 2P","woff2")
+const aim = getImageUrl("aim");
+const stage = getImageUrl("stage");
 
-// const stage = getImageUrl("../../../assets/stage.png")
-// const aim = getImageUrl("../../../assets/aim.png")
-// const press = "https://fonts.googleapis.com/css?family=Press+Start+2P"
-// const fire = getImageUrl("../../../assets/fire.mp3")
+const dogList = {}
+for (let i = 0; i < 12; i++) {
+    dogList["dog"+i] =  getImageUrl("dog"+ i)
+}
+
 
 export default {
+    press,
     stage,
     aim,
-    press,
-    fire,
     bird0,
     bird1,
     bullet,
-    bgm,
-    win
+    ...audioList,
+    ...dogList
 }

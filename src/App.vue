@@ -20,10 +20,13 @@ Bus.$on("changeProgress",n=>{
 </template>
 
 <style>
+
+
 * {
   padding: 0;
   margin: 0;
 }
+
 body,
 html {
   width: 100%;
