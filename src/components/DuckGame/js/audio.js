@@ -5,6 +5,13 @@ let bgmVoice = new Audio(assets["bgm"])
 let dogStart = new Audio(assets["dog_start"])
 let dogLaugh = new Audio(assets["dog_laugh"])
 let caught_duck = new Audio(assets["caught_duck"])
+let win = new Audio(assets["win"])
+
+export function playWin(){
+    win.volume = 1
+    win.currentTime = 0
+    win.play()
+}
 
 export function playCaughtDuck(){
     caught_duck.volume = 1
