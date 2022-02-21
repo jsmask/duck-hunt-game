@@ -7,6 +7,14 @@ export {
     showToast
 }
 
+export function wait(t = 1) {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            resolve()
+        }, t * 1000)
+    })
+}
+
 export function createSprite({ name, x = 0, y = 0, scale = 1, width, height, zIndex = 0, anchor = 0 }) {
     let texture = getTextures(name);
     let sprite = new Sprite(texture);

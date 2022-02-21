@@ -1,4 +1,4 @@
-import { createSprite } from "./tools"
+import { createSprite, wait } from "./tools"
 import { Text, Graphics, Container } from "pixi.js";
 import assets from "./assets"
 import Bus from "@/utils/bus"
@@ -30,18 +30,22 @@ export default class MainScene extends Scene {
         this.score = 0;
         this.count = 10;
         this.createCount = 2;
+        this.totalCount = 0
         this.maxRound = 3;
+        this.hitCount = 0;
         this.isStart = false
         this.stageContainer.on("pointerdown", this.handleClick.bind(this))
         return this;
     }
     init() {
+        this.duckList = []
         this.score = 0;
         this.createCount = 2;
+        this.totalCount = 0
         this.hitList = [...Array(this.count).keys()].map(() => false)
         this.bulletNum = 3;
         this.round = 1;
-        this.huntCount = 0;
+        this.hitCount = 0;
         this.stageContainer.removeChildren(0, this.stageContainer.children.length)
         this.uiContainer.removeChildren(0, this.uiContainer.children.length)
         this.stageContainer.addChild(this.drawBackground())
@@ -64,16 +68,26 @@ export default class MainScene extends Scene {
         if (!this.isStart) return;
         console.log(e.data.global)
         this.bulletNum -= 1;
-        this.score += 500;
-        this.hitList = this.hitList.map(item => item = true)
         playFire()
-
+        Bus.$emit("sendBullet", {
+            e: e.data.global,
+            callback:async duck => {
+                this.score += duck.score;
+                this.hitCount += 1;
+                this.hitList = this.hitList.map(item => item = true);
+                if(this.hitCount>=this.createCount){
+                    await this.computeRound()
+                }
+            }
+        })
         if (this.bulletNum <= 0) {
-            this.isStart = false;
-            await this.wait(.5)
-            await this.endRound()
-            return
+            await this.computeRound()
         };
+    }
+    async computeRound(){
+        this.isStart = false;
+        await wait(.5)
+        await this.endRound()
     }
     async onStart() {
         await this.beginGame()
@@ -86,13 +100,18 @@ export default class MainScene extends Scene {
 
     }
     async createDuck() {
+        const { createCount,game } = this;
         this.isStart = true;
-        this.bulletNum = 3; 
-        new Duck({
-            x:200,
-            y:200,
-            stage:this.stageContainer
-        })
+        this.bulletNum = 3;
+        for (let i = 0; i < createCount; i++) {
+            const duck = new Duck({
+                x: game.width*Math.random(),
+                y: (game.height-220)*Math.random(),
+                stage: this.stageContainer
+            })
+            this.duckList.push(duck)
+        }
+       
     }
     async beginGame() {
         playBgm()
@@ -100,8 +119,8 @@ export default class MainScene extends Scene {
         await this.nextRound();
         console.log('onStart')
     }
-    async flyAway(){
-        const { game, stage} = this;
+    async flyAway() {
+        const { game, stage } = this;
         this.drawBackground(0xffaaaa)
         await showToast({
             game, msg: "fly away",
@@ -113,25 +132,29 @@ export default class MainScene extends Scene {
             height: 40,
         })
     }
-    async laugh(){
+    async laugh() {
         this.drawBackground();
         await this.dog.laugh();
     }
     async endRound() {
         this.isStart = false;
-        if(this.huntCount >= 2){
+        if (this.hitCount >= 2) {
             await this.dog.caughtDuck(2)
         }
-        else if(this.huntCount==1){
+        else if (this.hitCount == 1) {
             await this.dog.caughtDuck(1)
         }
-        else{
+        else {
             await this.flyAway();
             await this.laugh();
         }
-
-        this.createCount += 2;
-        if (this.createCount < this.count) {
+        this.hitCount = 0;
+        this.totalCount += 2;
+        this.duckList.forEach(duck=>{
+            duck && duck.destroy()
+        })
+        this.duckList.length = 0
+        if (this.totalCount <= this.count) {
             await this.createDuck()
         } else {
             this.round += 1;
@@ -181,8 +204,8 @@ export default class MainScene extends Scene {
         }
         this.hitList = [...Array(this.count).keys()].map(() => false)
         this.bulletNum = 3;
-        this.createCount = 0;
-        this.huntCount = 0;
+        this.totalCount = 0;
+        this.hitCount = 0;
         await showToast({
             game,
             msg: "round\n" + this.round,
@@ -195,16 +218,16 @@ export default class MainScene extends Scene {
         })
         this.isStart = true
     }
-    drawBackground(color=0x3cbcfc) {
+    drawBackground(color = 0x3cbcfc) {
         const { bg, game } = this;
         const { width, height } = game;
         bg.beginFill(color, 1);
         bg.drawRect(0, 0, width, height);
         bg.endFill();
         bg.zIndex = 0;
-        return bg 
+        return bg
     }
-    drawBgStage(){
+    drawBgStage() {
         const { game } = this;
         const { width, height } = game;
         let sprite = createSprite({

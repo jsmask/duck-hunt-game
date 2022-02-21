@@ -20,11 +20,4 @@ export default class Scene {
     update(delta) {
         if (!this.stage.visible) return;
     }
-    wait(t = 1) {
-        return new Promise((resolve, reject) => {
-            setTimeout(() => {
-                resolve()
-            }, t * 1000)
-        })
-    }
 }
