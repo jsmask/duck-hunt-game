@@ -1,4 +1,4 @@
-import { playDogStart, playDogLaugh, pauseDogLaugh} from "./audio"
+import { playDogStart, playDogLaugh, playCaughtDuck } from "./audio"
 import { createSprite } from "./tools"
 import { getTextures } from "./textures"
 import { TimelineMax } from "gsap"
@@ -12,10 +12,9 @@ export default class Dog {
             let dog = createSprite({
                 name: "dog3",
                 x: 0,
-                y: 550
+                y: 570
             })
             dog.zIndex = 100;
-
             this.stage.addChild(dog)
             let dogSearchAni = new TimelineMax()
             dogSearchAni
@@ -37,12 +36,21 @@ export default class Dog {
                     dogSearchAni = new TimelineMax()
                     dogSearchAni
                         .from(dog, .8, {
-                            texture: getTextures("dog5"), x: 440, y: 550, ease: "SteppedEase(1)",
+                            texture: getTextures("dog5"), x: 440, y: 570, ease: "SteppedEase(1)",
                         })
-                        .to(dog, .2, { texture: getTextures("dog6"), x: 460, y: 420, ease: "SteppedEase(1)" })
-                        .to(dog, .2, { texture: getTextures("dog7"), x: 460, y: 430, ease: "SteppedEase(1)" })
+                        .to(dog, .2, { 
+                            texture: getTextures("dog6"), 
+                            width: getTextures("dog6").width,
+                            height: getTextures("dog6").height,
+                            x: 460, y: 430, ease: "SteppedEase(1)" })
+                        .to(dog, .2, {
+                            texture: getTextures("dog7"),
+                            width: getTextures("dog7").width,
+                            height: getTextures("dog7").height,
+                            x: 480, y: 440, ease: "SteppedEase(1)"
+                        })
                         .to(dog, .5, {
-                            x: 520, y: 460, alpha: 0,
+                            x: 530, y: 480, alpha: 0,
                             onComplete: () => {
                                 dogSearchAni.kill()
                                 dogMoveAni.kill()
@@ -54,30 +62,55 @@ export default class Dog {
             })
         })
     }
+    caughtDuck(num = 1) {
+        return new Promise((resolve, reject) => {
+            playCaughtDuck()
+            let dog = createSprite({
+                name: num == 1 ? "dog10" : "dog11",
+                x: 560,
+                y: 485,
+                scale:1.2
+            })
+            this.stage.addChild(dog)
+            let dogShowAni = new TimelineMax()
+            dogShowAni
+                .from(dog, { y: 570 })
+                .to(dog, { y: 485, duration: .5, })
+                .to(dog, {
+                    delay: 0.5, y: 570, onComplete: () => {
+                        dogShowAni.kill();
+                        this.stage.removeChild(dog)
+                        resolve()
+                    }
+                })
+            dogShowAni.play()
+        })
+    }
     laugh() {
         return new Promise((resolve, reject) => {
             let dog = createSprite({
                 name: "dog8",
-                x: 570,
-                y: 480
+                x: 560,
+                y: 485,
+                scale:1.2
             })
             this.stage.addChild(dog)
             playDogLaugh();
-            let doglaughAni = new TimelineMax();
-            doglaughAni.fromTo(dog, .22, { texture: getTextures("dog8") }, {
+            let laughAni = new TimelineMax();
+            laughAni.fromTo(dog, .22, { texture: getTextures("dog8") }, {
                 texture: getTextures("dog9"),
                 immediateRender: true,
                 ease: "SteppedEase(1)"
             });
-            doglaughAni.repeat(-1)
-            doglaughAni.play()
+            laughAni.repeat(-1)
+            laughAni.play()
             let dogShowAni = new TimelineMax()
             dogShowAni
                 .from(dog, { y: 570 })
-                .to(dog, { y: 480, duration: .5, })
+                .to(dog, { y: 485, duration: .5, })
                 .to(dog, {
                     delay: 0.5, y: 570, onComplete: () => {
-                        doglaughAni.kill();
+                        laughAni.kill();
                         dogShowAni.kill();
                         this.stage.removeChild(dog)
                         resolve()

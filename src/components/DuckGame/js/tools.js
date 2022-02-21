@@ -7,12 +7,13 @@ export {
     showToast
 }
 
-export function createSprite({ name, width = 100, height = 100, x = 0, y = 0, zIndex = 0, anchor = 0 }) {
-    let sprite = new Sprite(getTextures(name));
+export function createSprite({ name, x = 0, y = 0, scale = 1, width, height, zIndex = 0, anchor = 0 }) {
+    let texture = getTextures(name);
+    let sprite = new Sprite(texture);
     sprite.x = x;
     sprite.y = y;
-    sprite.width = width;
-    sprite.height = height;
+    sprite.width = (width || texture.width) * scale;
+    sprite.height = (height || texture.height) * scale;
     sprite.zIndex = zIndex;
     sprite.anchor.set(anchor)
     return sprite;

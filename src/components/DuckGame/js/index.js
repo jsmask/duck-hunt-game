@@ -82,10 +82,13 @@ export default class Game {
   }
   addAim(){
     let aim = createAim({
-      x: 0,
-      y: 0
+      x:-100,
+      y:-100
     })
     this.stage.on("pointermove", e => {
+      aim.position.copyFrom(e.data.global)
+    })
+    this.stage.on("pointerdown", e => {
       aim.position.copyFrom(e.data.global)
     })
     this.stage.addChild(aim)
