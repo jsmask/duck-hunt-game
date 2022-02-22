@@ -1,10 +1,26 @@
 import { Sprite, Text, Graphics, Container } from "pixi.js"
 import { getTextures } from "./textures"
 
-import { showToast } from "./toast"
+import { showToast, showScore } from "./toast"
 
 export {
-    showToast
+    showToast,
+    showScore
+}
+
+export function getTopScore() {
+    return window.localStorage.getItem("topScore") || 0;
+}
+
+export function setTopScore(score = 0) {
+    let top_score = Math.max(score, getTopScore());
+    window.localStorage.setItem("topScore", top_score)
+}
+
+export function random(lower, upper) {
+    lower = +lower || 0
+    upper = +upper || 0
+    return Math.random() * (upper - lower) + lower;
 }
 
 export function wait(t = 1) {

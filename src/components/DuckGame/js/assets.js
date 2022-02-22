@@ -6,7 +6,11 @@ const audioList = {
     bgm: getImageUrl("bgm", "mp3"),
     dog_start: getImageUrl("dog_start", "mp3"),
     dog_laugh: getImageUrl("dog_laugh", "mp3"),
-    win: getImageUrl("win", "mp3"),
+    perfect: getImageUrl("perfect", "mp3"),
+    game_over: getImageUrl("game_over", "mp3"),
+    game_win: getImageUrl("game_win", "mp3"),
+    duck_sound: getImageUrl("duck_sound", "mp3"),
+    duck_down:getImageUrl("duck_down", "mp3"),
 }
 
 const bird0 = getImageUrl("bird0");

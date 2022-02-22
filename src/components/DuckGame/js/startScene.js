@@ -2,6 +2,7 @@ import { Text, Graphics, Container } from "pixi.js";
 import Bus from "@/utils/bus"
 import { TimelineMax } from "gsap"
 import Scene from "./scene"
+import { getTopScore } from "./tools"
 
 class StartScene extends Scene {
     constructor(game) {
@@ -81,9 +82,13 @@ class StartScene extends Scene {
             Bus.$emit("startGame")
         })
 
-        let btnAni = new TimelineMax().fromTo(this.btn, {alpha: 0}, {alpha: 1,duration:.45,immediateRender:true,ease:"SteppedEase(1)"});
+        let btnAni = new TimelineMax().fromTo(this.btn, { alpha: 0 }, { alpha: 1, duration: .45, immediateRender: true, ease: "SteppedEase(1)" });
         btnAni.repeat(-1)
         btnAni.yoyo(true);
+    }
+    update() {
+        if (!this.stage.visible) return;
+        this.topScore && (this.topScore.text = "top score = ".toUpperCase() + getTopScore())
     }
     drawTopScore(score = 0) {
         const { width, height } = this.game;
