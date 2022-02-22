@@ -82,13 +82,16 @@ export default class MainScene extends Scene {
             this.isStart = false;
             this.timeCount = 500;
             this.isFlyaway = true;
-            this.duckList && this.duckList.forEach(duck => {
-                duck.isFlyaway = true;
-                duck.vx *= 2.2;
-                duck.vy = 10;
-            })
+            this.duckFlyAway();
             this.endRound()
         }
+    }
+    duckFlyAway(){
+        this.duckList && this.duckList.forEach(duck => {
+            duck.isFlyaway = true;
+            duck.vx *= 2.2;
+            duck.vy = -10;
+        })
     }
     async handleClick(e) {
         if (!this.isStart) return;
@@ -106,6 +109,7 @@ export default class MainScene extends Scene {
             }
         })
         if (this.bulletNum <= 0) {
+            this.duckFlyAway();
             await this.computeRound()
         };
     }
@@ -142,7 +146,8 @@ export default class MainScene extends Scene {
         const { game, stage } = this;
         this.drawBackground(0xffaaaa)
         await showToast({
-            game, msg: "fly away",
+            game, 
+            msg: "fly away",
             parent: stage,
             x: game.width / 2,
             y: game.height / 2,
