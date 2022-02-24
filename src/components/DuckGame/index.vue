@@ -4,18 +4,18 @@ import Game from "./js";
 import Bus from "../../utils/bus";
 
 const canvas = ref(null);
-let w = 1200;
-let h = 769;
+let width = 1200;
+let height = 769;
 
 const scale = `scale(${
   window.innerHeight < window.innerWidth
-    ? window.innerHeight / h
-    : window.innerWidth / w
+    ? window.innerHeight / height
+    : window.innerWidth / height
 })`;
 
+const isLandscape = ref(window.innerHeight>window.innerWidth)
+
 nextTick(() => {
-  let width = 1200;
-  let height = 769;
   new Game({
     width,
     height,
@@ -29,7 +29,7 @@ nextTick(() => {
 </script>
 
 <template>
-  <div class="game" ref="canvas"></div>
+  <div class="game" :class="{'landscape':isLandscape}" ref="canvas"></div>
 </template>
 
 <style lang="scss" scoped>
@@ -46,5 +46,8 @@ nextTick(() => {
 .game {
   transform: v-bind(scale);
   cursor: none;
+  &.landscape{
+    transform: v-bind(scale) rotate(90deg);
+  }
 }
 </style>
