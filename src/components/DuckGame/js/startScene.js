@@ -16,9 +16,6 @@ class StartScene extends Scene {
         this.drawTitle()
         this.drawStartBtn()
         this.drawTopScore()
-        // this.stage.on("pointerdown", e => {
-        //     playFire()
-        // })
         return this
     }
     drawBg() {
@@ -76,9 +73,7 @@ class StartScene extends Scene {
 
         this.btn.interactive = true;
         this.btn.buttonMode = true;
-        this.btn.on("pointerdown", e => {
-            // playFire()
-            // playBgm()
+        this.stage.on("pointerdown", e => {
             Bus.$emit("startGame")
         })
 

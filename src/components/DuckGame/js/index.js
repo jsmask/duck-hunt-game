@@ -80,36 +80,16 @@ export default class Game {
       this.mainScene.init().show();
     })
   }
-  addAim(){
-    const isLandscape  =  window.innerHeight>window.innerWidth
-    const clientWidth = document.documentElement.clientWidth;
-    const clientHeight = document.documentElement.clientHeight;
+  addAim() {
     let aim = createAim({
-      x:-100,
-      y:-100
-    })
-    this.stage.on("pointermove", e => {
-      // if(isLandscape){
-      //   e.data.global.x = clientWidth + e.data.global.x
-      //   e.data.global.y = clientHeight + 375 + e.data.global.y
-      // }
-      if(isLandscape){
-        // e.data.global.x += this.width
-        // e.data.global.y = Math.sin(90)
-        // console.log(e.data.global.y)
-        // e.data.global.y = y
-      }
-      aim.position.copyFrom(e.data.global)
+      x: -100,
+      y: -100
     })
     
+    this.stage.on("pointermove", e => {
+      aim.position.copyFrom(e.data.global)
+    })
     this.stage.on("pointerdown", e => {
-      if(isLandscape){
-        // e.data.global.x += this.width
-        // e.data.global.y = Math.sin(90)
-        // console.log(e.data.global.y)
-        // e.data.global.y = y
-      }
-      console.log(e.data.global)
       aim.position.copyFrom(e.data.global)
     })
     this.stage.addChild(aim)

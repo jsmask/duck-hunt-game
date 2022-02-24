@@ -7,6 +7,19 @@ export {
     showToast,
     showScore
 }
+// const isLandscape = window.innerHeight > window.innerWidth
+// const width = 1200;
+// const height = 769;
+
+// export function getPos(e){
+//     if (isLandscape) {
+//       let x = e.data.global.x;
+//       let y = e.data.global.y
+//       e.data.global.x = y * width / height
+//       e.data.global.y = height - x * (height / width)
+//     }
+//     return e.data.global
+// }
 
 export function getTopScore() {
     return window.localStorage.getItem("topScore") || 0;

@@ -10,10 +10,9 @@ let height = 769;
 const scale = `scale(${
   window.innerHeight < window.innerWidth
     ? window.innerHeight / height
-    : window.innerWidth / height
+    : window.innerWidth / width
 })`;
 
-const isLandscape = ref(window.innerHeight>window.innerWidth)
 
 nextTick(() => {
   new Game({
@@ -46,8 +45,5 @@ nextTick(() => {
 .game {
   transform: v-bind(scale);
   cursor: none;
-  &.landscape{
-    transform: v-bind(scale) rotate(90deg);
-  }
 }
 </style>
